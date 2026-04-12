@@ -1,4 +1,47 @@
-﻿-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
+﻿-- WS HUB loader (remote fallback)
+do
+    local loaderKey = "_WS_HUB_LOADER_V1"
+    if not rawget(_G, loaderKey) then
+        _G[loaderKey] = true
+
+        local function getLoader()
+            if type(loadstring) == "function" then return loadstring end
+            local g = getgenv and getgenv()
+            if g and type(g.loadstring) == "function" then return g.loadstring end
+            return nil
+        end
+
+        local function fetch(url)
+            local ok, body = pcall(function()
+                return game:HttpGet(url)
+            end)
+            if ok and type(body) == "string" and #body > 0 then
+                return body
+            end
+            if syn and syn.request then
+                local ok2, resp = pcall(function()
+                    return syn.request({Url = url, Method = "GET"})
+                end)
+                if ok2 and resp and resp.Body and #tostring(resp.Body) > 0 then
+                    return resp.Body
+                end
+            end
+            return nil
+        end
+
+        local url = "https://raw.githubusercontent.com/wesleyotovicz0-bit/ws-hub-the-best1/refs/heads/main/ws_hub-1.lua%20(2).txt"
+        local src = fetch(url)
+        local loader = getLoader()
+        if src and loader then
+            local fn = loader(src)
+            if type(fn) == "function" then
+                local okRun = pcall(fn)
+                if okRun then return end
+            end
+        end
+    end
+end
+-- â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
 -- â•‘         WS HUB  â€¢  v2.4             â•‘
 -- â•‘         @o_escolhido                â•‘
 -- â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -14864,6 +14907,7 @@ task.spawn(function()
         end
     end
 end)
+
 
 
 
